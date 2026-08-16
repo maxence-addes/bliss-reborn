@@ -22,6 +22,7 @@ export type Database = {
           habit_id: string
           id: string
           image_path: string
+          image_paths: string[]
           parent_user_id: string
           reviewed_at: string | null
           status: string
@@ -33,6 +34,7 @@ export type Database = {
           habit_id: string
           id?: string
           image_path: string
+          image_paths?: string[]
           parent_user_id: string
           reviewed_at?: string | null
           status?: string
@@ -44,6 +46,7 @@ export type Database = {
           habit_id?: string
           id?: string
           image_path?: string
+          image_paths?: string[]
           parent_user_id?: string
           reviewed_at?: string | null
           status?: string
