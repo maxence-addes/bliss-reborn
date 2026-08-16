@@ -315,7 +315,7 @@ function Index() {
     if (isParentGiven) {
       const done = target.completions.includes(today);
       if (done) return; // already validated by parent — can't un-check
-      if (myPendingHabitIds.has(id)) return; // already awaiting approval
+      // Still pending? The child can send additional photos for the same task.
       pendingHabitForUploadRef.current = id;
       fileInputRef.current?.click();
       return;
