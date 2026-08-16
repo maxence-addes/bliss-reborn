@@ -46,6 +46,29 @@ export const computeStreak = (completions: string[]): number => {
   return streak;
 };
 
+/**
+ * Série globale : un jour ne compte que si TOUTES les habitudes quotidiennes
+ * ont été cochées/validées ce jour-là. Les habitudes non quotidiennes
+ * (hebdo, ponctuelles, échéances) sont ignorées.
+ */
+export const computeGlobalStreak = (habits: Habit[]): number => {
+  const daily = habits.filter((h) => (h.schedule ?? { type: "daily" }).type === "daily");
+  if (daily.length === 0) return 0;
+
+  const allDone = (key: string) => daily.every((h) => h.completions.includes(key));
+
+  let streak = 0;
+  const cursor = new Date();
+  if (!allDone(todayKey(cursor))) {
+    cursor.setDate(cursor.getDate() - 1);
+  }
+  while (allDone(todayKey(cursor))) {
+    streak += 1;
+    cursor.setDate(cursor.getDate() - 1);
+  }
+  return streak;
+};
+
 export const isScheduledOn = (habit: Habit, date: Date): boolean => {
   const s = habit.schedule ?? { type: "daily" };
   if (s.type === "daily") return true;
