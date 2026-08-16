@@ -121,6 +121,7 @@ export type Database = {
           referral_source: string | null
           role: string | null
           updated_at: string
+          used_invite_codes: string[]
         }
         Insert: {
           avatar_url?: string | null
@@ -135,6 +136,7 @@ export type Database = {
           referral_source?: string | null
           role?: string | null
           updated_at?: string
+          used_invite_codes?: string[]
         }
         Update: {
           avatar_url?: string | null
@@ -149,6 +151,7 @@ export type Database = {
           referral_source?: string | null
           role?: string | null
           updated_at?: string
+          used_invite_codes?: string[]
         }
         Relationships: []
       }
@@ -157,6 +160,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      consume_invite_code: { Args: { _code: string }; Returns: undefined }
       find_profile_by_invite_code: {
         Args: { _code: string }
         Returns: {
