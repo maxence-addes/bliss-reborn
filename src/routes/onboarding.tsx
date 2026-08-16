@@ -114,6 +114,18 @@ function OnboardingPage() {
     })();
   }, [user, navigate, retake]);
 
+  // Resume the quiz where it was left off (élève ayant choisi « Accéder à l'app »)
+  useEffect(() => {
+    if (!user) return;
+    try {
+      const raw = localStorage.getItem(`onboarding-progress:${user.id}`);
+      if (!raw) return;
+      const saved = JSON.parse(raw) as { role?: Role; step?: number };
+      if (saved.role) setRole(saved.role);
+      if (saved.step && saved.step > 1) setStep(saved.step);
+    } catch {}
+  }, [user]);
+
   // Élève : rôle + code (2 étapes). Parent : rôle + 3 questions + invitation.
   const totalSteps = role === "student" ? 2 : 5;
   const progress = Math.min(100, Math.round((step / totalSteps) * 100));
