@@ -315,7 +315,7 @@ function Index() {
     if (isParentGiven) {
       const done = target.completions.includes(today);
       if (done) return; // already validated by parent — can't un-check
-      if (myPendingHabitIds.has(id)) return; // already awaiting approval
+      // Still pending? The child can send additional photos for the same task.
       pendingHabitForUploadRef.current = id;
       fileInputRef.current?.click();
       return;
@@ -368,9 +368,25 @@ function Index() {
   };
 
   const handleReviewApproval = async (approvalId: string, approve: boolean) => {
+    const approval = pendingApprovals.find((a) => a.id === approvalId);
     try {
       await reviewApprovalFn({ data: { approvalId, approve } });
       setPendingApprovals((prev) => prev.filter((a) => a.id !== approvalId));
+      // Approving a proof validates the task for that date: reflect it right away.
+      if (approve && approval) {
+        setHabits((prev) =>
+          prev.map((h) =>
+            h.id === approval.habitId && !h.completions.includes(approval.date)
+              ? { ...h, completions: [...h.completions, approval.date] }
+              : h,
+          ),
+        );
+        setMyPendingHabitIds((prev) => {
+          const next = new Set(prev);
+          next.delete(approval.habitId);
+          return next;
+        });
+      }
     } catch (e) {
       console.error(e);
     }
@@ -740,16 +756,47 @@ function Index() {
                         </p>
                       </div>
                     </div>
-                    {a.imageUrl ? (
-                      <a href={a.imageUrl} target="_blank" rel="noreferrer" className="block">
-                        <img
-                          src={a.imageUrl}
-                          alt={`Preuve pour ${a.habitName}`}
-                          className="w-full max-h-72 object-contain rounded-lg bg-muted/40 ring-1 ring-border"
-                        />
-                      </a>
-                    ) : (
-                      <p className="text-xs text-muted-foreground">Image indisponible.</p>
+                    {(() => {
+                      const urls =
+                        a.imageUrls && a.imageUrls.length > 0
+                          ? a.imageUrls
+                          : a.imageUrl
+                            ? [a.imageUrl]
+                            : [];
+                      if (urls.length === 0) {
+                        return (
+                          <p className="text-xs text-muted-foreground">Image indisponible.</p>
+                        );
+                      }
+                      return (
+                        <div
+                          className={cn(
+                            "grid gap-2",
+                            urls.length === 1 ? "grid-cols-1" : "grid-cols-2",
+                          )}
+                        >
+                          {urls.map((url, i) => (
+                            <a
+                              key={url}
+                              href={url}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="block"
+                            >
+                              <img
+                                src={url}
+                                alt={`Preuve ${i + 1} pour ${a.habitName}`}
+                                className="w-full max-h-72 object-contain rounded-lg bg-muted/40 ring-1 ring-border"
+                              />
+                            </a>
+                          ))}
+                        </div>
+                      );
+                    })()}
+                    {a.imageUrls && a.imageUrls.length > 1 && (
+                      <p className="text-xs text-muted-foreground">
+                        {a.imageUrls.length} images envoyées
+                      </p>
                     )}
                     <div className="flex gap-2">
                       <button
