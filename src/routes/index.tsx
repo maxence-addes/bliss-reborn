@@ -69,6 +69,7 @@ const INSPIRATIONS: { image: string; quote: string }[] = [
 ];
 import {
   computeStreak,
+  computeGlobalStreak,
   describeSchedule,
   getWeekDates,
   isScheduledOn,
@@ -525,7 +526,7 @@ function Index() {
       )
     : [];
 
-  const bestStreak = habits.reduce((m, h) => Math.max(m, computeStreak(h.completions)), 0);
+  const bestStreak = computeGlobalStreak(habits);
 
   const dateLabel = new Date().toLocaleDateString("fr-FR", {
     weekday: "long",
@@ -892,10 +893,7 @@ function Index() {
         const childApprovals = pendingApprovals.filter((a) => a.childId === viewingChild.id);
         const activeHabits = habits.length;
         const totalCompletions = habits.reduce((sum, h) => sum + h.completions.length, 0);
-        const bestChildStreak = habits.reduce(
-          (m, h) => Math.max(m, computeStreak(h.completions)),
-          0,
-        );
+        const bestChildStreak = computeGlobalStreak(habits);
         // Weekly completion %
         let weekTotal = 0;
         let weekDone = 0;
