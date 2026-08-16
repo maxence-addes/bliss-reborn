@@ -14,13 +14,165 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      habit_approvals: {
+        Row: {
+          child_user_id: string
+          created_at: string
+          date: string
+          habit_id: string
+          id: string
+          image_path: string
+          parent_user_id: string
+          reviewed_at: string | null
+          status: string
+        }
+        Insert: {
+          child_user_id: string
+          created_at?: string
+          date: string
+          habit_id: string
+          id?: string
+          image_path: string
+          parent_user_id: string
+          reviewed_at?: string | null
+          status?: string
+        }
+        Update: {
+          child_user_id?: string
+          created_at?: string
+          date?: string
+          habit_id?: string
+          id?: string
+          image_path?: string
+          parent_user_id?: string
+          reviewed_at?: string | null
+          status?: string
+        }
+        Relationships: []
+      }
+      habits: {
+        Row: {
+          completions: string[]
+          created_at: string
+          created_by: string | null
+          detail: string
+          id: string
+          name: string
+          schedule: Json
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          completions?: string[]
+          created_at?: string
+          created_by?: string | null
+          detail?: string
+          id?: string
+          name: string
+          schedule?: Json
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          completions?: string[]
+          created_at?: string
+          created_by?: string | null
+          detail?: string
+          id?: string
+          name?: string
+          schedule?: Json
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      parent_child_links: {
+        Row: {
+          child_user_id: string
+          created_at: string
+          id: string
+          parent_user_id: string
+        }
+        Insert: {
+          child_user_id: string
+          created_at?: string
+          id?: string
+          parent_user_id: string
+        }
+        Update: {
+          child_user_id?: string
+          created_at?: string
+          id?: string
+          parent_user_id?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          display_name: string | null
+          id: string
+          invite_code: string | null
+          invite_codes: string[]
+          metadata: Json
+          onboarded_at: string | null
+          profession: string | null
+          referral_source: string | null
+          role: string | null
+          updated_at: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          display_name?: string | null
+          id: string
+          invite_code?: string | null
+          invite_codes?: string[]
+          metadata?: Json
+          onboarded_at?: string | null
+          profession?: string | null
+          referral_source?: string | null
+          role?: string | null
+          updated_at?: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          invite_code?: string | null
+          invite_codes?: string[]
+          metadata?: Json
+          onboarded_at?: string | null
+          profession?: string | null
+          referral_source?: string | null
+          role?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      find_profile_by_invite_code: {
+        Args: { _code: string }
+        Returns: {
+          display_name: string
+          id: string
+          profession: string
+        }[]
+      }
+      generate_invite_code: { Args: never; Returns: string }
+      get_my_children: {
+        Args: never
+        Returns: {
+          display_name: string
+          id: string
+        }[]
+      }
     }
     Enums: {
       [_ in never]: never
