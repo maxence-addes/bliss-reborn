@@ -259,7 +259,8 @@ function OnboardingPage() {
     }
 
     setBusy(false);
-    goNext(); // continue onboarding after linking
+    const ok = await persistProfile();
+    if (ok) navigate({ to: "/" });
   };
 
   const finishStudent = async () => {
@@ -276,10 +277,13 @@ function OnboardingPage() {
     else setBusy(false);
   };
 
-  const skipLinking = () => {
+  const skipLinking = async () => {
     setEnteredCode("");
     setError(null);
-    goNext();
+    setBusy(true);
+    const ok = await persistProfile();
+    if (ok) navigate({ to: "/" });
+    else setBusy(false);
   };
 
   const goBack = () => {
