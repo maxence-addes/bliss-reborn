@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { Loader2, Check, Copy, GraduationCap, Users, ArrowLeft } from "lucide-react";
+import { Loader2, Check, Copy, GraduationCap, Users, ArrowLeft, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { cn } from "@/lib/utils";
@@ -319,6 +319,19 @@ function OnboardingPage() {
     setStep((s) => s + 1);
   };
 
+  // Quitter le quiz à tout moment : on mémorise l'avancement pour la prochaine fois.
+  const quitQuiz = () => {
+    if (user) {
+      try {
+        localStorage.setItem(
+          `onboarding-progress:${user.id}`,
+          JSON.stringify({ role, step }),
+        );
+      } catch {}
+    }
+    navigate({ to: "/" });
+  };
+
   return (
     <div className="min-h-screen bg-background text-foreground font-sans flex items-center justify-center px-6 py-12">
       <div className="w-full max-w-lg">
@@ -337,15 +350,26 @@ function OnboardingPage() {
         </div>
 
         <div className="bg-card ring-1 ring-border rounded-2xl p-6 transition-all">
-          {step > 1 && (
+          <div className="flex items-center justify-between mb-4">
+            {step > 1 ? (
+              <button
+                onClick={goBack}
+                disabled={busy}
+                className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
+              >
+                <ArrowLeft className="w-3.5 h-3.5" /> Retour
+              </button>
+            ) : (
+              <span />
+            )}
             <button
-              onClick={goBack}
+              onClick={quitQuiz}
               disabled={busy}
-              className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground mb-4 transition-colors"
+              className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
             >
-              <ArrowLeft className="w-3.5 h-3.5" /> Retour
+              Quitter <X className="w-3.5 h-3.5" />
             </button>
-          )}
+          </div>
 
           {/* STEP 1 — Role */}
           {step === 1 && (
