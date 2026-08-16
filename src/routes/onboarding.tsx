@@ -227,6 +227,7 @@ function OnboardingPage() {
     } else {
       try { localStorage.removeItem(`student-mode-active:${user.id}`); } catch {}
     }
+    try { localStorage.removeItem(`onboarding-progress:${user.id}`); } catch {}
     return true;
   };
 
@@ -289,13 +290,22 @@ function OnboardingPage() {
     else setBusy(false);
   };
 
-  const skipLinking = async () => {
+  // « Accéder à l'app » : on quitte l'espace élève sans terminer le quiz,
+  // qui reprendra à l'étape 2 (saisie du code) la prochaine fois.
+  const skipLinking = () => {
     setEnteredCode("");
     setError(null);
-    setBusy(true);
-    const ok = await persistProfile();
-    if (ok) navigate({ to: "/" });
-    else setBusy(false);
+    if (user) {
+      try {
+        localStorage.setItem(
+          `onboarding-progress:${user.id}`,
+          JSON.stringify({ role: "student", step: 2 }),
+        );
+        localStorage.removeItem(`student-mode-active:${user.id}`);
+        localStorage.removeItem(`student-mode-onboarded:${user.id}`);
+      } catch {}
+    }
+    navigate({ to: "/" });
   };
 
   const goBack = () => {
