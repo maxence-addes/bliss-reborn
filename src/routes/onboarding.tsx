@@ -114,8 +114,8 @@ function OnboardingPage() {
     })();
   }, [user, navigate, retake]);
 
-  // Total steps: role + linking/branching + 3 questions = 5
-  const totalSteps = 5;
+  // Élève : rôle + code (2 étapes). Parent : rôle + 3 questions + invitation.
+  const totalSteps = role === "student" ? 2 : 5;
   const progress = Math.min(100, Math.round((step / totalSteps) * 100));
 
   // Validation per step
@@ -258,8 +258,9 @@ function OnboardingPage() {
       return;
     }
 
-    setBusy(false);
-    goNext(); // continue onboarding after linking
+    const ok = await persistProfile();
+    if (ok) navigate({ to: "/" });
+    else setBusy(false);
   };
 
   const finishStudent = async () => {
@@ -276,10 +277,13 @@ function OnboardingPage() {
     else setBusy(false);
   };
 
-  const skipLinking = () => {
+  const skipLinking = async () => {
     setEnteredCode("");
     setError(null);
-    goNext();
+    setBusy(true);
+    const ok = await persistProfile();
+    if (ok) navigate({ to: "/" });
+    else setBusy(false);
   };
 
   const goBack = () => {
@@ -379,7 +383,7 @@ function OnboardingPage() {
                   disabled={busy}
                   className="flex-1 py-2.5 rounded-lg ring-1 ring-border text-sm font-medium hover:bg-muted/50 transition-colors disabled:opacity-50"
                 >
-                  Plus tard
+                  Accéder à l'app
                 </button>
                 <button
                   onClick={submitParentCode}
@@ -387,7 +391,7 @@ function OnboardingPage() {
                   className="flex-1 py-2.5 rounded-lg bg-foreground text-background text-sm font-medium hover:bg-foreground/80 transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
                 >
                   {busy && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
-                  Continuer
+                  Valider le code
                 </button>
               </div>
             </StepWrapper>
