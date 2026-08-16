@@ -4,6 +4,12 @@
 
 @custom-variant dark (&:is(.dark *));
 
+@theme {
+  --color-brand-primary: #d4a373;
+  --color-brand-muted: #84a59d;
+  --font-sans: 'Instrument Sans', ui-sans-serif, system-ui;
+}
+
 /*
  * Design system definition.
  *
