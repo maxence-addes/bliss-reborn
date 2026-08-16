@@ -1,0 +1,2 @@
+ALTER TABLE public.habit_approvals ADD COLUMN IF NOT EXISTS image_paths text[] NOT NULL DEFAULT '{}';
+UPDATE public.habit_approvals SET image_paths = ARRAY[image_path] WHERE cardinality(image_paths) = 0 AND image_path IS NOT NULL;
